@@ -429,8 +429,7 @@ td:first-child{text-align:center;font-family:'JetBrains Mono',monospace;font-siz
 <div class="stats-strip">
   <div class="stats-inner">
     <div class="stat"><span class="stat-n" id="s-acts">0</span><span class="stat-l">Activities</span></div>
-    <div class="stat"><span class="stat-n" id="s-tournament">0</span><span class="stat-l">Tournament</span></div>
-    <div class="stat"><span class="stat-n" id="s-community">0</span><span class="stat-l">Community Events</span></div>
+    <div class="stat"><span class="stat-n" id="s-current">0</span><span class="stat-l" id="s-current-label">Current Activity</span></div>
     <div class="stat"><span class="stat-n" id="s-total">0</span><span class="stat-l">Total Participants</span></div>
   </div>
 </div>
@@ -489,7 +488,7 @@ const events = [
     tabType: 'Tournament',
     type: 'tournament',
     data: [
-{no:1,rt:"Figyrine Yuan, King Participant",aid:"NJDIF3CGPFY33B26VOLNZTWX0",amt:261},
+{no:1,rt:"Figurine Yuan, King Participant",aid:"NJDIF3CGPFY33B26VOLNZTWX0",amt:261},
 {no:2,rt:"King Participant, Merchandise",aid:"AFXZRJVJBTAP4PEL4X3IQRWX6",amt:155},
 {no:3,rt:"King Participant, Mini Yuan",aid:"DVHEJEE4QPXVZ2WKEA1OY3RSZ",amt:132},
 {no:4,rt:"King Participant, Mini Yuan",aid:"EXZ1TKTF3DCT4FGQSXLFA30F5",amt:92},
@@ -1976,12 +1975,11 @@ function buildUI(){
   const stag = document.getElementById('server-tag');
   if(stag){ stag.textContent = SERVER.tag; }
 
-  const tData=events.find(e=>e.type==="tournament")?.data||[];
-  const cData=events.filter(e=>e.type!=="tournament").flatMap(e=>e.data);
-  document.getElementById('s-acts').textContent      = events.length;
-  document.getElementById('s-tournament').textContent= tData.length.toLocaleString();
-  document.getElementById('s-community').textContent = cData.length;
-  document.getElementById('s-total').textContent     = (tData.length+cData.length).toLocaleString();
+  const totalAll = events.reduce((s,e)=>s+e.data.length,0);
+  document.getElementById('s-acts').textContent         = events.length;
+  document.getElementById('s-current').textContent      = events[0].data.length.toLocaleString();
+  document.getElementById('s-current-label').textContent= events[0].tabName;
+  document.getElementById('s-total').textContent        = totalAll.toLocaleString();
 
   document.getElementById('event-tabs-container').innerHTML = events.map((ev,i)=>`
     <button class="event-tab${i===0?" active":""}" onclick="switchTab(${i},this)">
@@ -2029,7 +2027,7 @@ function buildUI(){
 function getBonusLabel(rt){
   if(rt.includes("Merchandise")) return "+ Merchandise";
   if(rt.includes("Mini Yuan"))   return "+ Mini Yuan";
-  if(rt.includes("Figyrine Yuan")) return "+ Figyrine Yuan";
+  if(rt.includes("Figurine Yuan")) return "+ Figurine Yuan";
   return "";
 }
 
@@ -2099,6 +2097,8 @@ function switchTab(idx,btn){
   document.querySelectorAll(".event-panel").forEach(p=>p.classList.remove("active"));
   btn.classList.add("active");
   document.getElementById("panel-"+idx).classList.add("active");
+  document.getElementById('s-current').textContent      = events[idx].data.length.toLocaleString();
+  document.getElementById('s-current-label').textContent= events[idx].tabName;
 }
 buildUI();
 </script>
